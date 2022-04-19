@@ -1,0 +1,9 @@
+{
+	"conection":{
+		"server":"localhost",
+		"user":"envios",
+		"password": "envios",
+		"database":"envios",
+		"port":"3306"
+	}
+}
