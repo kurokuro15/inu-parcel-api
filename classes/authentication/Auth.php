@@ -25,7 +25,7 @@ class Auth extends Conection {
 			} else {
 				$params['expiration'] = null;
 			}
-
+			//obtenemos al usuario para posteriormente validarlo
 			$stmt = $this->getUser($user);
 
 			//Validamos la existencia del usuario
