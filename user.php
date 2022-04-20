@@ -49,7 +49,7 @@ if ($method == "POST") {
 		$statusCode = $res['status_code'];
 		http_response_code(($statusCode));
 	}
-	echo json_encode($res);
+	echo json_encode($res["result"]);
 	
 } else 
 
@@ -66,7 +66,7 @@ if ($method == "PUT") {
 		$statusCode = $res['status_code'];
 		http_response_code(($statusCode));
 	}
-	echo json_encode($res);
+	echo json_encode($res["result"]);
 	
 } else 
 
@@ -83,11 +83,11 @@ if ($method == "DELETE") {
 		$statusCode = $res['status_code'];
 		http_response_code(($statusCode));
 	}
-	echo json_encode($res);
+	echo json_encode($res["result"]);
 } else {
 	// Si el método no es admitido.  Generamos un error 405
 	header('Content-Type: application/json');
 	$res = $_response->error_405();
-	echo json_encode($res);
+	echo json_encode($res["result"]);
 }
 
