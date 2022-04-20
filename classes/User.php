@@ -113,9 +113,9 @@ class User extends Conection
 		}
 	}
 	// Inserta un Usuario a la DB
-	public function insertUser($params)
+	private function insertUser($params)
 	{
-		$sqlstrPerson = "INSERT INTO Person  (firstname,secondname,lastname,secondlastname,dni,sex,birthday,country,state,municipality,parish,zipcode,numberhouse,street,reference) VALUES ('{$params["firstname"]}',
+		$sqlstrPerson = "INSERT INTO Person (firstname,secondname,lastname,secondlastname,dni,sex,birthday,country,state,municipality,parish,zipcode,numberhouse,street,reference) VALUES ('{$params["firstname"]}',
 		'{$params["secondname"]}',
 		'{$params["lastname"]}',
 		'{$params["secondlastname"]}',
@@ -140,7 +140,7 @@ class User extends Conection
 			$params["questionTwo"] = parent::encrypt($params["questionTwo"]);
 			$params["answerTwo"] = parent::encrypt($params["answerTwo"]);
 			$state = true;
-			$sqlstrUser = "INSERT INTO User (user, password, phone, email, person_id, questionOne, answerOne, questionTwo, answerTwo, state) VALUES ('{$params["user"]}','{$params["password"]}','{$params["phone"]}','{$params["email"]}','$stmt', {$params["questionOne"]}, {$params["answerOne"]}, {$params["questionTwo"]}, {$params["answerTwo"]}, $state)";
+			$sqlstrUser = "INSERT INTO User (user, password, phone, email, person_id, questionOne, answerOne, questionTwo, answerTwo, state) VALUES ('{$params["user"]}','{$params["password"]}','{$params["phone"]}','{$params["email"]}','$stmt', '{$params["questionOne"]}', '{$params["answerOne"]}', '{$params["questionTwo"]}', '{$params["answerTwo"]}', $state)";
 			$st = parent::nonQueryId($sqlstrUser);
 
 			if ($st) {
