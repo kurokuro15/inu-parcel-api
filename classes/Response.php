@@ -46,7 +46,7 @@ class Response {
 	}
 	public function error_401($string = 'No autorizado.'){
 		$this->response['status'] = "error";
-		$this->response['status_code'] = 500;
+		$this->response['status_code'] = 401;
 		$this->response['result'] = array(
 			"error_id" => "401",
 			"error_msg" => $string
