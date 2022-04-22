@@ -40,7 +40,7 @@ class User extends Conection
 		if (empty($headers['token'])) {
 			return	$_response->error_401('Acción no autorizada. Falta token de autenticación.');
 		}
-		$headers['token'];
+		
 		$token = parent::getToken($headers['token']);
 		if (!$token) {
 			return	$_response->error_401('No autorizado. Token inválido.');
@@ -135,9 +135,7 @@ class User extends Conection
 
 		if ($stmt) {
 			$params["password"] = parent::encrypt($params["password"]);
-			$params["questionOne"] = parent::encrypt($params["questionOne"]);
 			$params["answerOne"] = parent::encrypt($params["answerOne"]);
-			$params["questionTwo"] = parent::encrypt($params["questionTwo"]);
 			$params["answerTwo"] = parent::encrypt($params["answerTwo"]);
 			$state = true;
 			$sqlstrUser = "INSERT INTO User (user, password, phone, email, person_id, questionOne, answerOne, questionTwo, answerTwo, state) VALUES ('{$params["user"]}','{$params["password"]}','{$params["phone"]}','{$params["email"]}','$stmt', '{$params["questionOne"]}', '{$params["answerOne"]}', '{$params["questionTwo"]}', '{$params["answerTwo"]}', $state)";
@@ -235,7 +233,6 @@ class User extends Conection
 		if (empty($data['token'])) {
 			return	$_response->error_401('Acción no autorizada. Falta token de autenticación.');
 		}
-		$params['token'] = $data['token'];
 		$token = parent::getToken($headers['token']);
 		if (!$token) {
 			return	$_response->error_401('No autorizado. Token inválido.');
