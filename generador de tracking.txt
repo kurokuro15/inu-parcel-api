@@ -1,0 +1,56 @@
+function csum(sn) {
+	var s = 0;
+	var weight = [8, 6, 4, 2, 3, 5, 9, 7];
+	for (var i=0; i<weight.length; i++) s += weight[i] * parseInt(sn[i]);
+	var cs = 11 - (s % 11);
+	return cs==10 ? 0 : cs==11 ? 5 : cs;
+}
+
+function gen_fake_serial() {
+	var s = '';
+	for (var i=0; i<8; i++) s += Math.floor(Math.random()*10);
+	return s + csum(s);
+}
+
+function verify() {
+	var lines = document.getElementById("textarea").value.split('\n');
+	var out = '';
+	var errors = 0;
+	for (var i=0; i<lines.length; i++) {
+		s = lines[i];
+		if (s) {
+			var error = '';
+			var info = '';
+			var m = /^([A-Z]{2})(\d{8})(\d)([A-Z]{2})$/g.exec(s) || [];
+			if (!m.length) {
+				error = 'Wrong format, must be SI (2 chars) + SN (8 digits) + CS (1 digit) + CC (2 chars)';
+			} else {
+				var si = m[1];
+				var sn = m[2];
+				var cs = m[3];
+				var cc = m[4];
+				var csReal = csum(sn);
+				if (csReal != cs) {
+					error = 'Wrong Checksum (last digit is ' + cs + ', must be ' + csReal +')';
+				}
+				var cName = getCountryName(cc);
+				info = cName==cc ? (' unknown country '+cc+', probably fake') : (' Country: '+ cName + ', SI Code: ' + getSICode(si));
+			}
+			out += s + ' <a target=_blank href="#'+s+'">'+(error ? error : 'Checksum OK') + '</a> '+info+'<br/>\n';
+			if (error) errors++;
+		}
+	}
+	document.getElementById("info").innerHTML = out;
+	var e = document.getElementById("verify");
+	e.style.display = 'inherit';
+	e.className = e.className.replace( /red|green/g, errors ? 'red':'green');
+}
+
+function generate() {
+	var n = parseInt(document.getElementById("n").value);
+	var cc = document.getElementById("cc").value;
+	var si = document.getElementById("si").value;
+	var s = '';
+	for (var i=0; i<n; i++) s += si + gen_fake_serial() + cc + '\n';
+	document.getElementById("textarea").value = s;
+}
