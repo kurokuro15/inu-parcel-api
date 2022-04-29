@@ -34,7 +34,12 @@ class parcel extends Conection
 			return	$_response->error_401('No autorizado. Token inválido.');
 		}
 
-		$res = $this->getAllParcel();
+		if(isset($_GET['tracking'])){
+			$res = $this->getParcel($_GET['tracking']);	
+		}else {
+			$res = $this->getAllParcel();
+		}
+
 		if ($res) {
 			return $_response->ok_200($res);
 		} else {
@@ -85,8 +90,14 @@ class parcel extends Conection
 		$parcel = $this->insertParcel($params);
 
 		if ($parcel) {
-			$res = array("id" => $parcel, "msg" => "Envio guardado con éxito.");
-			return $_response->ok_200($res);
+			// actualizamos el status de la encomienda a 'pendiente'
+			$status = $this->updateStatus(array("parcel" => $parcel));
+			if($status){
+				$res = array("id" => $parcel, "msg" => "Envio guardado con éxito.", "status" => "Pendiente");
+				return $_response->ok_200($res);
+			} else {
+				return $_response->error_500();	
+			}
 		} else {
 			return $_response->error_500();
 		}
@@ -100,12 +111,31 @@ class parcel extends Conection
 		$stmt = parent::query($query);
 		if ($stmt) {
 			foreach ($stmt as $index => $value) {
+				// devolvemos el nombre y apellidos concatenados del usuario
 				$stmt[$index]['name'] = $this->getUserNames($value['user']);
+				//Devolvemos el status de la encomienda en modo json
+				$stmt[$index]['status'] = json_encode($this->getStatus($value['id'])); 
 			}
 			return $stmt;
 		} else {
 			return false;
 		}
+	}
+	// Obtenemos un envio específico
+	private function getParcel($tracking) {
+		$query = "SELECT * FROM parcel WHERE tracking = '$tracking';";
+
+		$stmt = parent::query($query);
+		if ($stmt[0]) {
+				// devolvemos el nombre y apellidos concatenados del usuario
+				$stmt[0]['name'] = $this->getUserNames($stmt[0]['user']);
+				//Devolvemos el status de la encomienda en modo json
+				$stmt[0]['status'] = json_encode($this->getStatus($stmt[0]['id'])); 
+			return $stmt[0];
+		} else {
+			return false;
+		}
+
 	}
 	// Obtenemos el 'nombre apellido' del usuario que hizo el envio
 	private function getUserNames($user)
@@ -115,6 +145,16 @@ class parcel extends Conection
 		$stmt = parent::query($query);
 		if ($stmt) {
 			return $stmt[0]['name'];
+		} else {
+			return false;
+		}
+	}
+
+	private function getStatus($parcelId){
+		$query = "SELECT status.status, description, date FROM status JOIN parcel_status ps ON ps.parcel = $parcelId ORDER BY ps.date DESC LIMIT 1;";
+		$stmt = parent::query($query);
+		if($stmt) {
+			return $stmt[0];
 		} else {
 			return false;
 		}
