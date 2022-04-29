@@ -11,13 +11,13 @@ $method = $_SERVER['REQUEST_METHOD'];
 if ($method == 'GET') {
 	$res = $_parcel->handlerGet();
 
-		//respondemos
-		if (isset($res["result"])) {
-			header('Content-Type: application/json');
-			$statusCode = $res['status_code'];
-			http_response_code(($statusCode));
-		}
-		echo json_encode($res["result"]);
+	//respondemos
+	if (isset($res["result"])) {
+		header('Content-Type: application/json');
+		$statusCode = $res['status_code'];
+		http_response_code(($statusCode));
+	}
+	echo json_encode($res["result"]);
 
 	//Si el método es POST
 } else if ($method == 'POST') {
@@ -33,11 +33,6 @@ if ($method == 'GET') {
 		http_response_code(($statusCode));
 		echo json_encode($res["result"]);
 	}
-	//Si el método es PUT
-} else if ($method == 'PUT') {
-
-	//Si el método es DELETE
-} else if ($method == 'DELETE') {
 } else {
 	// Si el método no es admitido.  Generamos un error 405
 	header('Content-Type: application/json');
