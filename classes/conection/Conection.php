@@ -77,7 +77,7 @@ class Conection {
 		}
 	}
 
-	protected function pagination($page){
+	protected function pagination($page) {
 		$start = 0; 
 		$end = 20;
 		if($page > 1) {
@@ -93,7 +93,7 @@ class Conection {
 		$stmt = $this->query($sqlstr);
 		if(isset($stmt)) {
 			$date = $stmt[0]['expiration_date'];
-			if($date > date('Y-m-d H:i')) {
+			if($date > date('Y-m-d H:i') || $date === '0000-00-00 00:00:00') {
 				return $stmt;
 			} else {
 				return 0;
@@ -103,4 +103,3 @@ class Conection {
 	}
 
 }
-?>
