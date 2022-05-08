@@ -1,4 +1,4 @@
-# rest-api
+# inu-parcel-api
 
 ### Proyecto de la materia INU-554 INTERFACES WEB CON EL USUARIO.
 
