@@ -14,6 +14,7 @@ if ($method == "GET") {
 	$res = $_user->handleGet();
  //Enviamos los resultados...
 	header('Content-Type: application/json');
+	header('Access-Control-Allow-Origin: *');
 	if (isset($res["result"])) {
 		$statusCode = $res['status_code'];
 		http_response_code(($statusCode));
@@ -30,6 +31,7 @@ if ($method == "GET") {
 
 		//respondemos
 		header('Content-Type: application/json');
+		header('Access-Control-Allow-Origin: *');
 		if (isset($res["result"])) {
 			$statusCode = $res['status_code'];
 			http_response_code(($statusCode));
@@ -46,6 +48,7 @@ if ($method == "GET") {
 
 			//respondemos
 			header('Content-Type: application/json');
+			header('Access-Control-Allow-Origin: *');
 			if (isset($res["result"])) {
 				$statusCode = $res['status_code'];
 				http_response_code(($statusCode));
@@ -62,6 +65,7 @@ if ($method == "GET") {
 
 				//respondemos
 				header('Content-Type: application/json');
+				header('Access-Control-Allow-Origin: *');
 				if (isset($res["result"])) {
 					$statusCode = $res['status_code'];
 					http_response_code(($statusCode));
@@ -70,6 +74,7 @@ if ($method == "GET") {
 			} else {
 				// Si el método no es admitido.  Generamos un error 405
 				header('Content-Type: application/json');
+				header('Access-Control-Allow-Origin: *');
 				$res = $_response->error_405();
 				echo json_encode($res["result"]);
 			}

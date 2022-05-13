@@ -79,10 +79,10 @@ class Conection {
 
 	protected function pagination($page) {
 		$start = 0; 
-		$end = 20;
+		$end = 5;
 		if($page > 1) {
 			$start = ($end * ($page -1)) + 1;
-			$end  = $end * $page;
+			$end  = $end * $page + 1;
 		}
 
 		return "$start,$end";

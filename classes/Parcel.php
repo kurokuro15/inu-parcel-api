@@ -34,10 +34,13 @@ class parcel extends Conection
 			return	$_response->error_401('No autorizado. Token inválido.');
 		}
 
-		if(isset($_GET['tracking'])){
-			$res = $this->getParcel($_GET['tracking']);	
-		}else {
-			$res = $this->getAllParcel();
+		if (isset($_GET['tracking'])) {
+			$res = $this->getParcel($_GET['tracking']);
+		} else {
+			if (isset($_GET['page']))
+				$res = $this->getAllParcel($_GET['page']);
+			else
+				$res = $this->getAllParcel();
 		}
 
 		if ($res) {
@@ -92,11 +95,11 @@ class parcel extends Conection
 		if ($parcel) {
 			// actualizamos el status de la encomienda a 'pendiente'
 			$status = $this->updateStatus(array("parcel" => $parcel));
-			if($status){
+			if ($status) {
 				$res = array("id" => $parcel, "msg" => "Envio guardado con éxito.", "status" => "Pendiente");
 				return $_response->ok_200($res);
 			} else {
-				return $_response->error_500();	
+				return $_response->error_500();
 			}
 		} else {
 			return $_response->error_500();
@@ -104,38 +107,64 @@ class parcel extends Conection
 	}
 
 	// Obtenemos TODOS los envios generados en la web... (por ahora, luego generados por el user)
-	private function getAllParcel()
+	private function getAllParcel($page = 1)
 	{
-		$query = "SELECT * FROM parcel;";
+		$limit = parent::pagination($page);
+		$query = "SELECT * FROM parcel LIMIT $limit";
 
 		$stmt = parent::query($query);
+		$meta = $this->prepareNextPreviousPage($page);
 		if ($stmt) {
 			foreach ($stmt as $index => $value) {
 				// devolvemos el nombre y apellidos concatenados del usuario
 				$stmt[$index]['name'] = $this->getUserNames($value['user']);
 				//Devolvemos el status de la encomienda en modo json
-				$stmt[$index]['status'] = json_encode($this->getStatus($value['id'])); 
+				$stmt[$index]['status'] = json_encode($this->getStatus($value['id']));
 			}
-			return $stmt;
+			return ["parcel" => $stmt, "meta" => $meta];
 		} else {
 			return false;
 		}
 	}
+	// preparamos la siguiente pagina y la anterior si existen 
+	private function prepareNextPreviousPage($current)
+	{
+		$query = "SELECT COUNT(*) as records FROM parcel;";
+		$records = parent::query($query)[0]['records'];
+		$pages = $records / 5;
+		if ($current === $pages) {
+			$next = NULL;
+			$prev = $current- 1;
+		} else if ($current === 1) {
+			$prev = NULL;
+			$next = $current+ 1;
+		} else if ($current < $pages) {
+			$next = $current+ 1;
+			$prev = $current- 1;
+		} else {
+			$prev = NULL;
+			$next = NULL;
+		}
+		$nextLink = $next ? "http://localhost/api-rest/parcel?page=$next" : $next;
+		$prevLink = $prev ? "http://localhost/api-rest/parcel?page=$prev" : $prev;
+		return ["next" => $nextLink, "previous" => $prevLink];
+	}
+
 	// Obtenemos un envio específico
-	private function getParcel($tracking) {
+	private function getParcel($tracking)
+	{
 		$query = "SELECT * FROM parcel WHERE tracking = '$tracking';";
 
 		$stmt = parent::query($query);
 		if ($stmt[0]) {
-				// devolvemos el nombre y apellidos concatenados del usuario
-				$stmt[0]['name'] = $this->getUserNames($stmt[0]['user']);
-				//Devolvemos el status de la encomienda en modo json
-				$stmt[0]['status'] = json_encode($this->getStatus($stmt[0]['id'])); 
+			// devolvemos el nombre y apellidos concatenados del usuario
+			$stmt[0]['name'] = $this->getUserNames($stmt[0]['user']);
+			//Devolvemos el status de la encomienda en modo json
+			$stmt[0]['status'] = json_encode($this->getStatus($stmt[0]['id']));
 			return $stmt[0];
 		} else {
 			return false;
 		}
-
 	}
 	// Obtenemos el 'nombre apellido' del usuario que hizo el envio
 	private function getUserNames($user)
@@ -150,10 +179,11 @@ class parcel extends Conection
 		}
 	}
 
-	private function getStatus($parcelId){
+	private function getStatus($parcelId)
+	{
 		$query = "SELECT status.status, description, date FROM status JOIN parcel_status ps ON ps.parcel = $parcelId ORDER BY ps.date DESC LIMIT 1;";
 		$stmt = parent::query($query);
-		if($stmt) {
+		if ($stmt) {
 			return $stmt[0];
 		} else {
 			return false;

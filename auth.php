@@ -13,6 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 	// enviamos los datos al handler de reseteo de contraseña
 	$res = $_auth->forget($headers);
 	//devolvemos una respuesta
+	header('Access-Control-Allow-Origin: *');
+	header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 	header('Content-Type: application/json');
 	if (isset($res["result"])) {
 		$statusCode = $res['status_code'];
@@ -42,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 		$res = $_response->error_400();
 	}
 	//devolvemos una respuesta
+	header('Access-Control-Allow-Origin: *');
+	header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 	header('Content-Type: application/json');
 	if (isset($res["result"])) {
 		$statusCode = $res['status_code'];
@@ -58,6 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 	$res = $_auth->reset($req);
 
 	//devolvemos una respuesta
+	header('Access-Control-Allow-Origin: *');
+	header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 	header('Content-Type: application/json');
 	if (isset($res["result"])) {
 		$statusCode = $res['status_code'];
@@ -66,6 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 	echo json_encode($res["result"]);
 } else {
 	// si el método es diferente a POST.  Generamos un error 405
+	header('Access-Control-Allow-Origin: *');
+	header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 	header('Content-Type: application/json');
 	$res = $_response->error_405();
 	echo json_encode($res["result"]);
